@@ -33,24 +33,18 @@
                             850: '#0f172a',
                             800: '#1e293b',
                             700: '#334155'
-                        },
-                        db: {
-                            cyan: '#38bdf8',
-                            emerald: '#10b981',
-                            indigo: '#6366f1',
-                            amber: '#f59e0b',
-                            rose: '#f43f5e'
                         }
                     },
                     animation: {
-                        'pulse-glow': 'pulseGlow 3s infinite ease-in-out',
-                        'cursor-blink': 'blink 1s infinite',
-                        'float': 'float 6s ease-in-out infinite'
+                        'pulse-glow': 'pulseGlow 4s infinite alternate ease-in-out',
+                        'cursor-blink': 'blink 1s step-end infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'typewriter': 'typing 2s steps(40, end)'
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%, 100%': { opacity: 0.4, transform: 'scale(1)' },
-                            '50%': { opacity: 0.8, transform: 'scale(1.05)' }
+                            '0%': { opacity: 0.3, transform: 'scale(1) translate(0px, 0px)' },
+                            '100%': { opacity: 0.6, transform: 'scale(1.1) translate(10px, -10px)' }
                         },
                         blink: {
                             '0%, 100%': { opacity: 1 },
@@ -58,7 +52,11 @@
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-8px)' }
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        typing: {
+                            from: { width: '0' },
+                            to: { width: '100%' }
                         }
                     }
                 }
@@ -72,56 +70,74 @@
             color: #f8fafc;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            /* Subtle grid background */
+            background-image: linear-gradient(rgba(30, 41, 59, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(30, 41, 59, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        /* Glassmorphism background utilities */
+        /* Upgraded Glassmorphism with Spotlight Effect */
         .glass-card {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(51, 65, 85, 0.45);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
         }
 
-        .glass-card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Mouse tracking spotlight pseudo-element */
+        .glass-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(56, 189, 248, 0.06), transparent 40%);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .glass-card:hover::before {
+            opacity: 1;
         }
 
-        .glass-card-hover:hover {
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
-            transform: translateY(-2px);
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-4px);
+        }
+
+        /* Ensure content stays above the spotlight */
+        .glass-card > * {
+            position: relative;
+            z-index: 1;
         }
 
         .glass-terminal {
-            background: rgba(10, 14, 23, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(30, 41, 59, 0.8);
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Gradient Glow Effects */
-        .glow-cyan {
-            box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.3);
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
         }
-
-        .glow-emerald {
-            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #06080d;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #38bdf8;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #06080d; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; border: 2px solid #06080d; }
+        ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
 
         /* Syntax Highlighting */
         .token-keyword { color: #f43f5e; font-weight: 600; }
@@ -130,20 +146,26 @@
         .token-comment { color: #64748b; font-style: italic; }
         .token-type { color: #f59e0b; }
         .token-var { color: #818cf8; }
+        
+        .typewriter-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body class="min-h-screen relative selection:bg-sky-500/30 selection:text-sky-200">
 
+    <!-- Ambient Background Glows -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div class="absolute -top-40 -left-40 w-96 h-96 bg-sky-500/10 rounded-full blur-[120px] animate-pulse-glow"></div>
-        <div class="absolute top-1/3 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] animate-pulse-glow" style="animation-delay: 1.5s;"></div>
-        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] animate-pulse-glow" style="animation-delay: 3s;"></div>
-        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b10_1px,transparent_1px),linear-gradient(to_bottom,#1e293b10_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        <div class="absolute -top-40 -left-40 w-[30rem] h-[30rem] bg-sky-500/10 rounded-full blur-[120px] animate-pulse-glow"></div>
+        <div class="absolute top-1/3 -right-40 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse-glow" style="animation-delay: 1.5s;"></div>
+        <div class="absolute -bottom-40 left-1/3 w-[30rem] h-[30rem] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse-glow" style="animation-delay: 3s;"></div>
     </div>
 
-    <!-- Notification Toast Element -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center space-x-3 bg-slate-900 border border-sky-500/50 text-slate-100 px-5 py-3 rounded-xl shadow-2xl">
-        <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-mono text-sm">
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center space-x-3 bg-slate-900/90 backdrop-blur-md border border-sky-500/50 text-slate-100 px-5 py-3 rounded-xl shadow-2xl">
+        <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-mono text-sm shadow-[0_0_10px_rgba(56,189,248,0.3)]">
             <i class="fa-solid fa-check"></i>
         </div>
         <div>
@@ -152,453 +174,372 @@
         </div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <header class="glass-card rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 border border-slate-800">
+        <!-- HEADER -->
+        <header class="glass-card rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 reveal active">
             <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-400 p-[2px] shadow-lg">
-                        <div class="w-full h-full bg-obsidian-900 rounded-[10px] flex items-center justify-center font-mono font-bold text-sky-400 text-xl">
+                <div class="relative group">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-400 p-[2px] shadow-lg transform group-hover:rotate-6 transition-transform duration-300">
+                        <div class="w-full h-full bg-obsidian-900 rounded-[10px] flex items-center justify-center font-mono font-bold text-transparent bg-clip-text bg-gradient-to-br from-sky-400 to-emerald-300 text-2xl">
                             VG
                         </div>
                     </div>
-                    <span class="absolute -bottom-1 -right-1 flex h-3.5 w-3.5">
+                    <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-obsidian-900"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-obsidian-900"></span>
                     </span>
                 </div>
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <h1 class="text-xl font-bold tracking-tight text-white">Vaibhav</h1>
-                        <span class="px-2 py-0.5 text-[10px] font-mono font-medium tracking-wide uppercase bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-md">MCA Candidate</span>
+                    <div class="flex items-center space-x-3 flex-wrap gap-y-1">
+                        <h1 class="text-2xl font-bold tracking-tight text-white">Vaibhav</h1>
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 text-[10px] font-mono font-medium tracking-wide uppercase bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-md">MCA '27</span>
+                            <span class="px-2 py-0.5 text-[10px] font-mono font-medium tracking-wide uppercase bg-slate-800 text-slate-300 border border-slate-700 rounded-md flex items-center"><i class="fa-solid fa-location-dot mr-1"></i> Pune, IN</span>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-400 font-mono mt-0.5">
-                        <i class="fa-solid fa-database text-sky-400 mr-1.5"></i>Aspiring Database Administrator & T-SQL Developer
+                    <p class="text-sm text-slate-400 font-mono mt-1 flex items-center">
+                        <i class="fa-solid fa-database text-sky-400 mr-2"></i>Aspiring Database Administrator & SQL Developer
                     </p>
                 </div>
             </div>
 
-            <!-- Top Header Status & Links -->
             <div class="flex items-center flex-wrap gap-3">
-                <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
+                <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs font-mono shadow-[0_0_15px_rgba(16,185,129,0.1)]">
                     <i class="fa-solid fa-circle text-[8px] animate-pulse"></i>
-                    <span>AVAILABLE FOR DB ROLES</span>
+                    <span>AVAILABLE FOR JUNIOR DB ROLES</span>
                 </div>
                 
-                <a href="https://github.com/VaibhavG808" target="_blank" rel="noopener" class="p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 hover:text-white transition-colors border border-slate-700/50" title="GitHub Profile">
-                    <i class="fa-brands fa-github text-base"></i>
+                <a href="https://github.com/VaibhavG808" target="_blank" rel="noopener" class="p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all duration-300 border border-slate-700/50 hover:border-slate-500 hover:shadow-lg" title="GitHub Profile">
+                    <i class="fa-brands fa-github text-lg"></i>
                 </a>
 
-                <button onclick="copyEmail()" class="flex items-center space-x-2 px-4 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 font-medium text-xs transition-all">
-                    <i class="fa-regular fa-envelope"></i>
+                <button onclick="copyEmail()" class="group flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600/20 to-indigo-600/20 hover:from-sky-500/30 hover:to-indigo-500/30 text-sky-300 hover:text-white border border-sky-500/30 font-medium text-sm transition-all duration-300 shadow-[0_0_20px_rgba(56,189,248,0.1)] hover:shadow-[0_0_25px_rgba(56,189,248,0.25)]">
+                    <i class="fa-regular fa-envelope group-hover:scale-110 transition-transform"></i>
                     <span>Contact Direct</span>
                 </button>
             </div>
         </header>
 
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="glass-card rounded-xl p-4 flex items-center space-x-4 border border-slate-800/80">
-                <div class="p-3 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                    <i class="fa-solid fa-server text-lg"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">Core RDBMS</div>
-                    <div class="text-sm font-bold text-slate-100 font-mono">SQL Server 2022</div>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-4 flex items-center space-x-4 border border-slate-800/80">
-                <div class="p-3 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                    <i class="fa-solid fa-bolt text-lg"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">Focus Area</div>
-                    <div class="text-sm font-bold text-slate-100 font-mono">T-SQL & Optimization</div>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-4 flex items-center space-x-4 border border-slate-800/80">
-                <div class="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <i class="fa-solid fa-shield-halved text-lg"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">Data Integrity</div>
-                    <div class="text-sm font-bold text-slate-100 font-mono">Backup & Security</div>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-4 flex items-center space-x-4 border border-slate-800/80">
-                <div class="p-3 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    <i class="fa-solid fa-graduation-cap text-lg"></i>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 font-medium">Academic Track</div>
-                    <div class="text-sm font-bold text-slate-100 font-mono">MCA Degree candidate</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- MAIN BIO & TERMINAL -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 reveal">
             
-            <!-- LEFT: Bio Card (7 Cols) -->
-            <div class="lg:col-span-7 glass-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between border border-slate-800 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-sky-500/5 rounded-full blur-3xl group-hover:bg-sky-500/10 transition-all pointer-events-none"></div>
+            <!-- LEFT: Bio Card -->
+            <div class="lg:col-span-7 glass-card rounded-2xl p-8 flex flex-col justify-between group">
+                <div class="absolute top-0 right-0 w-72 h-72 bg-sky-500/5 rounded-full blur-[80px] group-hover:bg-sky-500/15 transition-all duration-700 pointer-events-none"></div>
 
                 <div class="space-y-6 relative z-10">
                     <div class="flex items-center space-x-2 text-xs font-mono text-sky-400 uppercase tracking-widest font-semibold">
-                        <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
                         <span>Profile Overview</span>
                     </div>
 
-                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight leading-tight">
-                        Building <span class="bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent">Reliable, High-Performance</span> Data Systems.
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-100 tracking-tight leading-tight">
+                        Building <span class="bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent typewriter-text animate-typewriter">Reliable Data Systems.</span>
                     </h2>
 
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        Hello, I'm <strong class="text-white font-semibold">Vaibhav</strong> 👋 — an MCA candidate focused on building practical skills in Database Administration, SQL Development, and Data Infrastructure.
+                    <p class="text-slate-300 text-base leading-relaxed">
+                        Hello, I'm <strong class="text-white font-semibold text-lg">Vaibhav</strong> 👋 — an MCA candidate (graduating March 2027) based in Pune, dedicated to building practical, production-ready skills in Database Administration, SQL Development, and Data Infrastructure.
                     </p>
 
-                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                        My interest is in the engineering behind reliable data systems — from relational design and SQL development to performance tuning, security, backup, recovery, monitoring, and automation. I prefer learning through hands-on projects, database labs, performance experiments, and real-world problem solving.
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        My primary engineering focus is on the architecture behind resilient data systems. From relational schema design and complex T-SQL development to performance tuning, security hardening, backup strategies, and automation. I thrive on hands-on labs, optimizing execution plans, and solving real-world database challenges directly in SQL Server.
                     </p>
 
                     <!-- Career Targets -->
-                    <div class="pt-2">
-                        <div class="text-xs font-mono text-slate-400 mb-3 font-medium">CURRENTLY BUILDING TOWARD A CAREER IN:</div>
-                        <div class="grid grid-cols-2 sm:grid-cols-2 gap-2.5">
-                            <div class="flex items-center space-x-2.5 px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-xs font-medium hover:border-sky-500/40 transition-colors">
-                                <i class="fa-solid fa-server text-sky-400"></i>
+                    <div class="pt-4">
+                        <div class="text-xs font-mono text-slate-500 mb-3 font-semibold tracking-wide">TARGETING ROLES IN:</div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm font-medium hover:border-sky-500/50 hover:bg-slate-800 transition-all duration-300 cursor-default">
+                                <div class="p-1.5 rounded bg-sky-500/10 text-sky-400"><i class="fa-solid fa-server"></i></div>
                                 <span>Database Administration</span>
                             </div>
-                            <div class="flex items-center space-x-2.5 px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-xs font-medium hover:border-indigo-500/40 transition-colors">
-                                <i class="fa-solid fa-code text-indigo-400"></i>
+                            <div class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm font-medium hover:border-indigo-500/50 hover:bg-slate-800 transition-all duration-300 cursor-default">
+                                <div class="p-1.5 rounded bg-indigo-500/10 text-indigo-400"><i class="fa-solid fa-code"></i></div>
                                 <span>SQL Development</span>
-                            </div>
-                            <div class="flex items-center space-x-2.5 px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-xs font-medium hover:border-emerald-500/40 transition-colors">
-                                <i class="fa-solid fa-database text-emerald-400"></i>
-                                <span>Database Engineering</span>
-                            </div>
-                            <div class="flex items-center space-x-2.5 px-3 py-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-xs font-medium hover:border-amber-500/40 transition-colors">
-                                <i class="fa-solid fa-network-wired text-amber-400"></i>
-                                <span>Data Infrastructure</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-mono">
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-800">
                         <i class="fa-solid fa-laptop-code text-sky-400"></i>
                         <span>Methodology: Hands-on Labs & Tuning</span>
                     </div>
-                    <span class="text-slate-500">v2.4 Engine</span>
+                    <span class="text-slate-600">v2.4 Engine</span>
                 </div>
             </div>
 
-            <!-- RIGHT: Interactive Terminal Window (5 Cols) -->
-            <div class="lg:col-span-5 glass-terminal rounded-2xl overflow-hidden flex flex-col border border-slate-800 shadow-2xl">
-                
+            <!-- RIGHT: Interactive Terminal Window -->
+            <div class="lg:col-span-5 glass-terminal rounded-2xl overflow-hidden flex flex-col border border-slate-700/60 shadow-2xl">
                 <!-- Terminal Titlebar -->
-                <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+                <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
                     <div class="flex items-center space-x-2">
-                        <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
-                        <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
-                        <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
-                        <span class="text-xs font-mono text-slate-400 ml-2 font-medium">focus_tree.sql</span>
+                        <span class="w-3 h-3 rounded-full bg-rose-500 hover:bg-rose-400 transition-colors cursor-pointer shadow-[0_0_5px_rgba(244,63,94,0.5)]"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-500 hover:bg-amber-400 transition-colors cursor-pointer shadow-[0_0_5px_rgba(245,158,11,0.5)]"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 hover:bg-emerald-400 transition-colors cursor-pointer shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
+                        <span class="text-xs font-mono text-slate-400 ml-3 font-medium select-none">focus_tree.sql</span>
                     </div>
-                    <!-- Terminal Tab Nav -->
                     <div class="flex bg-slate-950 rounded-lg p-0.5 border border-slate-800 text-[11px] font-mono">
-                        <button onclick="switchTab('tree')" id="tab-btn-tree" class="px-2.5 py-1 rounded-md text-sky-400 bg-slate-800 font-semibold transition-all">Tree</button>
-                        <button onclick="switchTab('query')" id="tab-btn-query" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition-all">DMV Query</button>
+                        <button onclick="switchTab('tree')" id="tab-btn-tree" class="px-3 py-1 rounded-md text-sky-400 bg-slate-800 shadow-sm font-semibold transition-all">Tree</button>
+                        <button onclick="switchTab('query')" id="tab-btn-query" class="px-3 py-1 rounded-md text-slate-400 hover:text-white transition-all">DMV Query</button>
                     </div>
                 </div>
 
-                <!-- Terminal Content Body -->
-                <div class="p-5 font-mono text-xs overflow-x-auto flex-1 flex flex-col justify-between space-y-4">
+                <!-- Terminal Body -->
+                <div class="p-6 font-mono text-xs overflow-x-auto flex-1 flex flex-col justify-between space-y-4">
                     
-                    <!-- TAB 1: Focus Tree -->
-                    <div id="tab-content-tree" class="space-y-2">
-                        <div class="text-slate-500 mb-3">// CURRENT ARCHITECTURAL FOCUS</div>
-                        
-                        <div class="text-sky-400 font-bold flex items-center space-x-2">
+                    <div id="tab-content-tree" class="space-y-3 animate-fade-in">
+                        <div class="text-slate-500 mb-4 select-none">// CURRENT ARCHITECTURAL FOCUS</div>
+                        <div class="text-sky-400 font-bold flex items-center space-x-2 text-sm">
                             <i class="fa-solid fa-folder-open text-amber-400"></i>
-                            <span>SQL Server Stack</span>
+                            <span>SQL_Server_Stack</span>
                         </div>
                         
-                        <div class="pl-4 space-y-1.5 border-l-2 border-slate-800/80 ml-2">
+                        <div class="pl-4 space-y-2 border-l border-slate-700/80 ml-2">
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span class="text-sky-400 font-semibold">T-SQL Engineering</span>
+                                <span class="text-slate-600">├──</span><span class="text-sky-400 font-semibold">T-SQL Engineering</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span>Query Tuning & Diagnostics</span>
+                                <span class="text-slate-600">├──</span><span>Query Tuning & Diagnostics</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span>Indexing Strategies</span>
+                                <span class="text-slate-600">├──</span><span>Indexing Strategies</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span>Execution Plan Analysis</span>
+                                <span class="text-slate-600">├──</span><span>Execution Plan Analysis</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span>Security & Role RBAC</span>
+                                <span class="text-slate-600">├──</span><span>Security & Role RBAC</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span>Backup & Point-in-Time Recovery</span>
+                                <span class="text-slate-600">├──</span><span>Backup & Point-in-Time Recovery</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">├──</span>
-                                <span>Performance Monitoring</span>
+                                <span class="text-slate-600">├──</span><span>Performance Monitoring</span>
                             </div>
                             <div class="text-slate-300 hover:text-sky-300 transition-colors cursor-default flex items-center space-x-2">
-                                <span class="text-slate-600">└──</span>
-                                <span class="text-emerald-400">Automation & Agent Jobs</span>
+                                <span class="text-slate-600">└──</span><span class="text-emerald-400">Automation & Agent Jobs</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- TAB 2: DMV Query (Hidden by default) -->
-                    <div id="tab-content-query" class="hidden space-y-2">
-                        <div class="text-slate-500">// DM_EXEC_QUERY_STATS INDEX FRAGMENTATION TEST</div>
-                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800/80 leading-relaxed overflow-x-auto text-slate-300">
+                    <div id="tab-content-query" class="hidden space-y-3 animate-fade-in">
+                        <div class="text-slate-500 select-none">// DM_EXEC_QUERY_STATS INDEX FRAGMENTATION TEST</div>
+                        <div class="bg-obsidian-950 p-4 rounded-lg border border-slate-800 leading-relaxed overflow-x-auto text-slate-300 shadow-inner">
 <span class="token-keyword">SELECT</span> 
     dbs.name <span class="token-keyword">AS</span> DatabaseName,
     ps.avg_fragmentation_in_percent
 <span class="token-keyword">FROM</span> sys.dm_db_index_physical_stats(
     <span class="token-func">DB_ID</span>(), <span class="token-keyword">NULL</span>, <span class="token-keyword">NULL</span>, <span class="token-keyword">NULL</span>, <span class="token-string">'LIMITED'</span>) ps
-<span class="token-keyword">WHERE</span> ps.avg_fragmentation_in_percent &gt; <span class="token-type">15.0</span>;
+<span class="token-keyword">WHERE</span> ps.avg_fragmentation_in_percent > <span class="token-type">15.0</span>;
                         </div>
-                        <button onclick="copySnippet('dmv-query')" class="w-full mt-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-sky-400 text-xs font-mono transition-colors flex items-center justify-center space-x-2 border border-slate-700">
+                        <button onclick="copySnippet('dmv-query')" class="w-full mt-3 py-2 rounded-md bg-slate-800/80 hover:bg-slate-700 text-sky-400 text-xs font-mono transition-all flex items-center justify-center space-x-2 border border-slate-700 hover:border-sky-500/50">
                             <i class="fa-regular fa-copy"></i>
                             <span>Copy T-SQL Snippet</span>
                         </button>
                     </div>
 
                     <!-- Terminal Prompt Footer -->
-                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-slate-500 text-[11px]">
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-slate-500 text-[11px] select-none">
                         <div class="flex items-center space-x-2">
-                            <span class="text-emerald-400">vaibhav@db-node-01:~$</span>
-                            <span class="w-2 h-4 bg-sky-400 inline-block animate-cursor-blink"></span>
+                            <span class="text-emerald-400 font-semibold">vaibhav@db-node-01:~$</span>
+                            <span class="w-2 h-3.5 bg-sky-400 inline-block animate-cursor-blink"></span>
                         </div>
-                        <span class="text-slate-600">UTF-8</span>
+                        <span class="text-slate-600 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">UTF-8</span>
                     </div>
-
                 </div>
             </div>
-
         </section>
 
-        <section class="space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <!-- CORE COMPETENCIES -->
+        <section class="space-y-8 reveal">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <div class="text-xs font-mono text-sky-400 uppercase tracking-widest font-semibold">Technical Profile</div>
-                    <h3 class="text-2xl font-bold text-slate-100 tracking-tight">Core Competencies & Stack</h3>
+                    <div class="text-xs font-mono text-sky-400 uppercase tracking-widest font-semibold flex items-center">
+                        <i class="fa-solid fa-layer-group mr-2"></i> Technical Profile
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight mt-1">Core Competencies</h3>
                 </div>
-                <div class="text-xs font-mono text-slate-400">
-                    <i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> Structured Domain Expertise
+                <div class="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+                    Structured Domain Expertise
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
                 <!-- CARD 1: DATABASE -->
-                <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between border border-slate-800/80 group">
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-database"></i>
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500/20 to-transparent border border-sky-500/30 text-sky-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(56,189,248,0.1)]">
+                                <i class="fa-solid fa-database animate-float"></i>
                             </div>
-                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 border border-slate-700/50">PILLAR 01</span>
+                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-900/80 text-slate-400 border border-slate-700/50">PILLAR 01</span>
                         </div>
-
                         <div>
-                            <h4 class="text-lg font-bold text-slate-100 group-hover:text-sky-400 transition-colors">🗄️ DATABASE</h4>
-                            <p class="text-xs text-slate-400 mt-1">Architecture, Engine & Modeling</p>
+                            <h4 class="text-lg font-bold text-slate-100">Database Engine</h4>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Architecture & Relational Modeling</p>
                         </div>
-
                         <div class="space-y-2 pt-2">
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">SQL Server</span>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+                                <span class="text-slate-200 font-medium">SQL Server 2022</span>
                                 <span class="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded">Primary</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">MySQL</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">Relational</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Relational</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">SSMS</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">Management</span>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Relational Design</span>
-                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">ERD</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">IDE</span>
                             </div>
                         </div>
-
-                        <div class="flex flex-wrap gap-1.5 pt-2">
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">Normalization</span>
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">Constraints</span>
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">FK / PK</span>
+                        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-800">
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">Normalization</span>
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">PK/FK Design</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- CARD 2: PERFORMANCE -->
-                <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between border border-slate-800/80 group">
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-bolt"></i>
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-transparent border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                                <i class="fa-solid fa-bolt animate-float" style="animation-delay: 1s;"></i>
                             </div>
-                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 border border-slate-700/50">PILLAR 02</span>
+                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-900/80 text-slate-400 border border-slate-700/50">PILLAR 02</span>
                         </div>
-
                         <div>
-                            <h4 class="text-lg font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">⚡ PERFORMANCE</h4>
-                            <p class="text-xs text-slate-400 mt-1">Optimization & Execution Tuning</p>
+                            <h4 class="text-lg font-bold text-slate-100">Performance</h4>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Optimization & Execution Tuning</p>
                         </div>
-
                         <div class="space-y-2 pt-2">
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">Query Optimization</span>
                                 <span class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded">Core</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">Execution Plans</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">Analysis</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Analysis</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">Indexing</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">Clustered/NC</span>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">T-SQL Tuning</span>
-                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Refactoring</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Strategy</span>
                             </div>
                         </div>
-
-                        <div class="flex flex-wrap gap-1.5 pt-2">
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">Query Diagnostics</span>
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">SARGability</span>
+                        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-800">
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">T-SQL Refactoring</span>
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">SARGability</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- CARD 3: SECURITY -->
-                <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between border border-slate-800/80 group">
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-lock"></i>
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-transparent border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                                <i class="fa-solid fa-lock animate-float" style="animation-delay: 2s;"></i>
                             </div>
-                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 border border-slate-700/50">PILLAR 03</span>
+                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-900/80 text-slate-400 border border-slate-700/50">PILLAR 03</span>
                         </div>
-
                         <div>
-                            <h4 class="text-lg font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">🔐 SECURITY</h4>
-                            <p class="text-xs text-slate-400 mt-1">Access Control & Authorization</p>
+                            <h4 class="text-lg font-bold text-slate-100">Data Security</h4>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Access Control & Authorization</p>
                         </div>
-
                         <div class="space-y-2 pt-2">
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">Authentication</span>
-                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Windows/SQL</span>
+                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Mixed Mode</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Authorization & Roles</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">RBAC</span>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+                                <span class="text-slate-200 font-medium">Roles / RBAC</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Security</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Permissions</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">GRANT/DENY</span>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Secure SQL</span>
-                                <span class="text-[10px] font-mono text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded">Hardening</span>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+                                <span class="text-slate-200 font-medium">Hardening</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Protocols</span>
                             </div>
                         </div>
-
-                        <div class="flex flex-wrap gap-1.5 pt-2">
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">Least Privilege</span>
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">Access Control</span>
+                        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-800">
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">Least Privilege</span>
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">GRANT/DENY</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- CARD 4: OPERATIONS -->
-                <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between border border-slate-800/80 group">
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-gears"></i>
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-transparent border border-amber-500/30 text-amber-400 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                                <i class="fa-solid fa-gears animate-float" style="animation-delay: 3s;"></i>
                             </div>
-                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 text-slate-400 border border-slate-700/50">PILLAR 04</span>
+                            <span class="text-[10px] font-mono px-2 py-1 rounded bg-slate-900/80 text-slate-400 border border-slate-700/50">PILLAR 04</span>
                         </div>
-
                         <div>
-                            <h4 class="text-lg font-bold text-slate-100 group-hover:text-amber-400 transition-colors">⚙️ OPERATIONS</h4>
-                            <p class="text-xs text-slate-400 mt-1">Backup, Recovery & Automation</p>
+                            <h4 class="text-lg font-bold text-slate-100">Operations</h4>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">Backup, Recovery & Automation</p>
                         </div>
-
                         <div class="space-y-2 pt-2">
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Backup & Recovery</span>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+                                <span class="text-slate-200 font-medium">Backup Types</span>
                                 <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">Full/Diff/Log</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Maintenance Plans</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">Integrity</span>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                                 <span class="text-slate-200 font-medium">Monitoring</span>
-                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">Health Checks</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Health</span>
                             </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                                <span class="text-slate-200 font-medium">Linux & Bash</span>
-                                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">OS Level</span>
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+                                <span class="text-slate-200 font-medium">Linux/Bash</span>
+                                <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">OS Level</span>
                             </div>
                         </div>
-
-                        <div class="flex flex-wrap gap-1.5 pt-2">
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">SQL Agent Jobs</span>
-                            <span class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800/80 text-slate-300 border border-slate-700/50">Automation</span>
+                        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-800">
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">SQL Agent Jobs</span>
+                            <span class="px-2 py-1 text-[10px] font-mono rounded-md bg-slate-800 text-slate-300">Integrity</span>
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
-        <section class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+        <!-- SNIPPETS TOOLBOX -->
+        <section class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6 reveal">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-800/80 pb-6">
                 <div>
                     <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-widest">
-                        <i class="fa-solid fa-terminal"></i>
+                        <i class="fa-solid fa-terminal animate-pulse"></i>
                         <span>DBA Utility Toolbox</span>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-100 tracking-tight mt-1">Production-Ready T-SQL Snippets</h3>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight mt-1">Production-Ready T-SQL</h3>
+                    <p class="text-sm text-slate-400 mt-2">Scripts and templates I use for daily administration tasks.</p>
                 </div>
                 
                 <!-- Snippet Selector Buttons -->
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="loadSnippet('backup')" id="snip-btn-backup" class="snip-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-sky-500/20 text-sky-400 border border-sky-500/40 font-semibold transition-all">Full Backup Script</button>
-                    <button onclick="loadSnippet('index')" id="snip-btn-index" class="snip-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 text-slate-400 border border-slate-700/50 hover:text-white transition-all">Missing Index Finder</button>
-                    <button onclick="loadSnippet('cpu')" id="snip-btn-cpu" class="snip-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 text-slate-400 border border-slate-700/50 hover:text-white transition-all">Top CPU Queries</button>
+                <div class="flex flex-wrap gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="loadSnippet('backup')" id="snip-btn-backup" class="snip-btn px-4 py-2 rounded-lg text-xs font-mono bg-sky-500/20 text-sky-400 border border-sky-500/40 font-semibold transition-all">Backup Script</button>
+                    <button onclick="loadSnippet('index')" id="snip-btn-index" class="snip-btn px-4 py-2 rounded-lg text-xs font-mono text-slate-400 hover:text-white hover:bg-slate-800 transition-all border border-transparent">Missing Indexes</button>
+                    <button onclick="loadSnippet('cpu')" id="snip-btn-cpu" class="snip-btn px-4 py-2 rounded-lg text-xs font-mono text-slate-400 hover:text-white hover:bg-slate-800 transition-all border border-transparent">Top CPU Queries</button>
                 </div>
             </div>
 
-            <div class="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-slate-300">
-                <button onclick="copyCurrentSnippet()" class="absolute top-3 right-3 px-3 py-1.5 rounded bg-slate-800/90 hover:bg-slate-700 text-sky-400 border border-slate-700 text-[11px] transition-all flex items-center space-x-1.5">
+            <div class="relative rounded-xl overflow-hidden bg-obsidian-950 border border-slate-700/80 p-5 font-mono text-[13px] text-slate-300 shadow-2xl group">
+                <!-- Mac-style window controls -->
+                <div class="absolute top-4 left-4 flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                </div>
+
+                <button onclick="copyCurrentSnippet()" class="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-sky-600 text-sky-400 hover:text-white border border-slate-700 hover:border-sky-500 text-xs transition-all duration-300 flex items-center space-x-1.5 opacity-0 group-hover:opacity-100 focus:opacity-100">
                     <i class="fa-regular fa-copy"></i>
                     <span>Copy Script</span>
                 </button>
 
-                <pre id="snippet-display" class="overflow-x-auto leading-relaxed pt-2">
-<span class="token-comment">-- Automated Full Database Backup Template with Verification</span>
+                <pre id="snippet-display" class="overflow-x-auto leading-relaxed pt-8 scroll-smooth"><span class="token-comment">-- Automated Full Database Backup Template with Verification</span>
 <span class="token-keyword">DECLARE</span> <span class="token-var">@DatabaseName</span> <span class="token-type">VARCHAR</span>(<span class="token-type">100</span>) = <span class="token-string">'ProductionDB'</span>;
 <span class="token-keyword">DECLARE</span> <span class="token-var">@BackupPath</span> <span class="token-type">VARCHAR</span>(<span class="token-type">255</span>) = <span class="token-string">'C:\SQLBackups\'</span>;
 <span class="token-keyword">DECLARE</span> <span class="token-var">@FileName</span> <span class="token-type">VARCHAR</span>(<span class="token-type">255</span>);
@@ -610,28 +551,62 @@
 <span class="token-keyword">TO DISK</span> = <span class="token-var">@FileName</span> 
 <span class="token-keyword">WITH</span> <span class="token-type">CHECKSUM</span>, <span class="token-type">COMPRESSION</span>, <span class="token-type">STATS</span> = <span class="token-type">10</span>;
 
-<span class="token-keyword">RESTORE VERIFYONLY FROM DISK</span> = <span class="token-var">@FileName</span>;
-</pre>
+<span class="token-keyword">RESTORE VERIFYONLY FROM DISK</span> = <span class="token-var">@FileName</span>;</pre>
             </div>
         </section>
 
-        <footer class="glass-card rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 font-mono gap-4 border border-slate-800">
-            <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-database text-sky-400"></i>
-                <span>Designed for Vaibhav — Aspiring Database Administrator</span>
+        <!-- FOOTER -->
+        <footer class="glass-card rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 font-mono gap-4 border border-slate-800 reveal">
+            <div class="flex items-center space-x-3 bg-slate-900/50 px-3 py-1.5 rounded border border-slate-800/80">
+                <i class="fa-solid fa-server text-sky-400"></i>
+                <span>Engineered by Vaibhav</span>
             </div>
             
             <div class="flex items-center space-x-4">
-                <span id="utc-clock" class="text-slate-500">UTC: 00:00:00</span>
+                <div class="flex items-center space-x-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span id="utc-clock" class="text-slate-300 font-semibold">UTC: 00:00:00</span>
+                </div>
                 <span class="text-slate-700">|</span>
-                <a href="https://github.com/VaibhavG808" target="_blank" class="text-sky-400 hover:underline">GitHub Profile</a>
+                <a href="https://github.com/VaibhavG808" target="_blank" class="text-sky-400 hover:text-sky-300 hover:underline transition-colors flex items-center">
+                    <i class="fa-brands fa-github mr-1.5"></i> GitHub Profile
+                </a>
             </div>
         </footer>
 
     </div>
 
     <script>
-        // Snippet Repository Data
+        // --- 1. Mouse Spotlight Tracking ---
+        document.addEventListener("mousemove", (e) => {
+            document.querySelectorAll(".glass-card").forEach((card) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            });
+        });
+
+        // --- 2. Scroll Reveal Observer ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- 3. Snippet Repository Data ---
         const snippets = {
             backup: `-- Automated Full Database Backup Template with Verification
 DECLARE @DatabaseName VARCHAR(100) = 'ProductionDB';
@@ -673,27 +648,29 @@ ORDER BY AvgCPU_Time DESC;`
 
         let currentSnippetKey = 'backup';
 
-        // Terminal Tab Switcher
+        // --- 4. Terminal Tab Switcher ---
         function switchTab(tab) {
             const treeContent = document.getElementById('tab-content-tree');
             const queryContent = document.getElementById('tab-content-query');
             const btnTree = document.getElementById('tab-btn-tree');
             const btnQuery = document.getElementById('tab-btn-query');
+            const activeClass = 'px-3 py-1 rounded-md text-sky-400 bg-slate-800 shadow-sm font-semibold transition-all';
+            const inactiveClass = 'px-3 py-1 rounded-md text-slate-400 hover:text-white transition-all';
 
             if (tab === 'tree') {
                 treeContent.classList.remove('hidden');
                 queryContent.classList.add('hidden');
-                btnTree.className = 'px-2.5 py-1 rounded-md text-sky-400 bg-slate-800 font-semibold transition-all';
-                btnQuery.className = 'px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition-all';
+                btnTree.className = activeClass;
+                btnQuery.className = inactiveClass;
             } else {
                 treeContent.classList.add('hidden');
                 queryContent.classList.remove('hidden');
-                btnQuery.className = 'px-2.5 py-1 rounded-md text-sky-400 bg-slate-800 font-semibold transition-all';
-                btnTree.className = 'px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition-all';
+                btnQuery.className = activeClass;
+                btnTree.className = inactiveClass;
             }
         }
 
-        // Snippet Switcher
+        // --- 5. Snippet Switcher ---
         function loadSnippet(key) {
             currentSnippetKey = key;
             const display = document.getElementById('snippet-display');
@@ -739,18 +716,21 @@ ORDER BY AvgCPU_Time DESC;`
             }
 
             // Button highlights
+            const activeBtnClass = 'snip-btn px-4 py-2 rounded-lg text-xs font-mono bg-sky-500/20 text-sky-400 border border-sky-500/40 font-semibold transition-all';
+            const inactiveBtnClass = 'snip-btn px-4 py-2 rounded-lg text-xs font-mono text-slate-400 hover:text-white hover:bg-slate-800 transition-all border border-transparent';
+
             const btns = ['backup', 'index', 'cpu'];
             btns.forEach(b => {
                 const btnEl = document.getElementById(`snip-btn-${b}`);
-                if (b === key) {
-                    btnEl.className = 'snip-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-sky-500/20 text-sky-400 border border-sky-500/40 font-semibold transition-all';
-                } else {
-                    btnEl.className = 'snip-btn px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 text-slate-400 border border-slate-700/50 hover:text-white transition-all';
-                }
+                btnEl.className = (b === key) ? activeBtnClass : inactiveBtnClass;
             });
+            
+            // Add a subtle flash animation to text when changed
+            display.style.opacity = 0;
+            setTimeout(() => display.style.opacity = 1, 150);
         }
 
-        // Clipboard Copy Logic
+        // --- 6. Clipboard & Notifications ---
         function copyCurrentSnippet() {
             copyTextToClipboard(snippets[currentSnippetKey], 'Copied T-SQL script to clipboard!');
         }
@@ -770,7 +750,6 @@ ORDER BY AvgCPU_Time DESC;`
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => showToast('Copied!', msg));
             } else {
-                // Fallback using execCommand
                 const textArea = document.createElement("textarea");
                 textArea.value = text;
                 textArea.style.position = "fixed";
@@ -787,7 +766,6 @@ ORDER BY AvgCPU_Time DESC;`
             }
         }
 
-        // Custom Toast Notification System
         function showToast(title, msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-title').innerText = title;
@@ -802,7 +780,7 @@ ORDER BY AvgCPU_Time DESC;`
             }, 3000);
         }
 
-        // Live UTC Clock Tracker
+        // --- 7. Live UTC Clock ---
         function updateClock() {
             const now = new Date();
             const utcString = now.toUTCString().split(' ')[4];
